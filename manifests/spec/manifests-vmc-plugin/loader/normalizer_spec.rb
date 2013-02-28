@@ -27,7 +27,28 @@ describe VMCManifests::Normalizer do
 
       it "sets it to none" do
         expect(subject).to eq(
-          :applications => [{ :path => ".", :url => "none" }])
+          :applications => [{ :path => ".", :url => "none" }]
+        )
+      end
+    end
+
+    context 'with a manifest with a subdomain attribute' do
+      let(:manifest) { { "applications" => { "." => { "subdomain" => "use-this-for-host" } } } }
+
+      it "sets the subdomain key to be host" do
+        expect(subject).to eq(
+          :applications => [{ :path => ".", :host => "use-this-for-host" }]
+        )
+      end
+
+      context "when the host attribute is also set" do
+        let(:manifest) { { "applications" => { "." => { "subdomain" => "dont-use-this-for-host", "host" => "canonical-attribute" } } } }
+
+        it 'does not overwrite an explicit host attribute' do
+          expect(subject).to eq(
+            :applications => [{ :path => ".", :host => "canonical-attribute" }]
+          )
+        end
       end
     end
 

@@ -105,6 +105,14 @@ module VMCManifests
       if app.key?("url") && app["url"].nil?
         app["url"] = "none"
       end
+
+      if app.key?("subdomain")
+        if app.key?("host")
+          app.delete("subdomain")
+        else
+          app["host"] = app.delete("subdomain")
+        end
+      end
     end
 
     def toplevel_attributes(manifest)
